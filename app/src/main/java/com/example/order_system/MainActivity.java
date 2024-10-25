@@ -20,7 +20,20 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tv_meal;
     private Button btn_select;
-    private ActivityResultLauncher<Intent> mStartForResult;
+    private final ActivityResultLauncher<Intent> mStartForResult =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent intent = result.getData();
+                    // 如果 intent 不為 null，且 intent 的 extras 不為 null
+                    if (intent != null && intent.getExtras() != null) {
+                        Bundle b = intent.getExtras();
+                        String str1 = b.getString("drink");
+                        String str2 = b.getString("sugar");
+                        String str3 = b.getString("ice");
+                        tv_meal.setText(String.format("飲料: %s\n甜度: %s\n冰塊: %s", str1, str2, str3));
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,46 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
         tv_meal = findViewById(R.id.tv_meal);
         btn_select = findViewById(R.id.btn_choice);
-     /*
+
         btn_select.setOnClickListener(view -> {
             mStartForResult.launch(
                     new Intent(this, MainActivity2.class));
-        });
-
-
-        final ActivityResultLauncher<Intent> mStartForResult =
-                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent intent = result.getData();
-                        // 如果 intent 不為 null，且 intent 的 extras 不為 null
-                        if (intent != null && intent.getExtras() != null) {
-                            Bundle b = intent.getExtras();
-                            String str1 = b.getString("drink");
-                            String str2 = b.getString("sugar");
-                            String str3 = b.getString("ice");
-                            tv_meal.setText(String.format("飲料: %s\n甜度: %s\n冰塊: %s", str1, str2, str3));
-                        }
-                    }
-                });
-
-    */
-        // 初始化 mStartForResult
-        mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                Intent intent = result.getData();
-                // 如果 intent 不為 null，且 intent 的 extras 不為 null
-                if (intent != null && intent.getExtras() != null) {
-                    Bundle b = intent.getExtras();
-                    String str1 = b.getString("drink");
-                    String str2 = b.getString("sugar");
-                    String str3 = b.getString("ice");
-                    tv_meal.setText(String.format("飲料: %s\n甜度: %s\n冰塊: %s", str1, str2, str3));
-                }
-            }
-        });
-
-        btn_select.setOnClickListener(view -> {
-            mStartForResult.launch(new Intent(this, MainActivity2.class));
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
